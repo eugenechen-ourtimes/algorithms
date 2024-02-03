@@ -103,8 +103,8 @@ int heap_selectVertex(Heap *heap) {
     int lastVertex = heap->vertices[heap->size];
     heap->vertices[1] = lastVertex;
     heap->vertices[heap->size] = -1;
-    heap->indices[firstVertex] = -1;
     heap->indices[lastVertex] = 1;
+    heap->indices[firstVertex] = -1;
     heap->size--;
 
     heapify(heap->size, heap->vertices, heap->distances, heap->indices, 1);
