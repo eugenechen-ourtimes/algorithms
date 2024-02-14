@@ -10,4 +10,11 @@ int findShortestPathUnweightedGraph(
     int *predecessors
 );
 
+int findShortestPathWeightedGraph(
+    const WeightedGraph *graph,
+    int sourceVertex,
+    int *distances,
+    int *predecessors
+);
+
 #endif

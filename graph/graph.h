@@ -15,14 +15,25 @@ struct unweightedGraph {
     const UnweightedGraphListNode **listHeads;
 };
 
-typedef struct unweightedEdge UnweightedEdge;
-
-struct unweightedEdge {
-    int src;
-    int dst;
-};
-
 int unweightedGraph__constructor(UnweightedGraph *graph, const char *graphFile);
 void unweightedGraph__destructor(UnweightedGraph *graph);
+
+typedef struct weightedGraphListNode WeightedGraphListNode;
+
+struct weightedGraphListNode {
+    int destination;
+    int weight;
+    const struct weightedGraphListNode *next;
+};
+
+typedef struct weightedGraph WeightedGraph;
+
+struct weightedGraph {
+    int numVertices;
+    const WeightedGraphListNode **listHeads;
+};
+
+int weightedGraph__constructor(WeightedGraph *graph, const char *graphFile);
+void weightedGraph__destructor(WeightedGraph *graph);
 
 #endif
