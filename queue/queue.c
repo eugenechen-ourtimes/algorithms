@@ -22,7 +22,7 @@ int queue__destructor(Queue *queue) {
     return 0;
 }
 
-int queue_empty(Queue *queue, bool *empty) {
+int queue_empty(const Queue *queue, bool *empty) {
     *empty = queue->head == NULL;
     return 0;
 }
