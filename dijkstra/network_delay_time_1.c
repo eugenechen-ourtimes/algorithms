@@ -15,21 +15,15 @@ void reverse(int *a, int n) {
     }
 }
 
-typedef struct data Data;
-
-struct data {
-    int destination;
-    int weight;
-};
-
 typedef struct listNode ListNode;
 
 struct listNode {
-    Data data;
+    int destination;
+    int weight;
     const struct listNode *next;
 };
 
-void dijkstra(
+void findShortestPath(
     int numVertices,
     const ListNode **heads,
     int source,
@@ -62,8 +56,8 @@ void dijkstra(
 
         hasSelected[selectedVertex] = true;
         for (const ListNode *node = heads[selectedVertex]; node != NULL; node = node->next) {
-            int destination = node->data.destination;
-            int newDistance = distances[selectedVertex] + node->data.weight;
+            int destination = node->destination;
+            int newDistance = distances[selectedVertex] + node->weight;
             if (newDistance < distances[destination]) {
                 distances[destination] = newDistance;
             }
@@ -73,9 +67,10 @@ void dijkstra(
     free(hasSelected);
 }
 
-const ListNode *ll_insertHead(const ListNode *head, Data data) {
+const ListNode *ll_insertHead(const ListNode *head, int destination, int weight) {
     ListNode *newNode = (ListNode *) malloc(sizeof(ListNode));
-    newNode->data = data;
+    newNode->destination = destination;
+    newNode->weight = weight;
     newNode->next = head;
 
     return newNode;
@@ -107,11 +102,10 @@ int networkDelayTime(int **times, int timesSize, int *timesColSize, int n, int k
         int source = timesCol[0] - 1;
         int destination = timesCol[1] - 1;
         int weight = timesCol[2];
-        Data data = { .destination = destination, .weight = weight };
-        heads[source] = ll_insertHead(heads[source], data);
+        heads[source] = ll_insertHead(heads[source], destination, weight);
     }
 
-    dijkstra(numVertices, heads, source, distances);
+    findShortestPath(numVertices, heads, source, distances);
 
     int maxDist = -1;
     for (int i = 0; i < numVertices; i++) {
@@ -132,7 +126,7 @@ int networkDelayTime(int **times, int timesSize, int *timesColSize, int n, int k
     return maxDist == INT_MAX ? -1 : maxDist;
 }
 
-void networkDelayTimeTest() {
+void networkDelayTimeTest(void) {
     int n = 2;
     int k = 2;
 

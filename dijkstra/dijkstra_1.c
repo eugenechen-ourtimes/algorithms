@@ -15,21 +15,15 @@ void reverse(int *a, int n) {
     }
 }
 
-typedef struct data Data;
-
-struct data {
-    int destination;
-    int weight;
-};
-
 typedef struct listNode ListNode;
 
 struct listNode {
-    Data data;
+    int destination;
+    int weight;
     const struct listNode *next;
 };
 
-void dijkstra(
+void findShortestPath(
     int numVertices,
     const ListNode **heads,
     int source,
@@ -64,8 +58,8 @@ void dijkstra(
 
         hasSelected[selectedVertex] = true;
         for (const ListNode *node = heads[selectedVertex]; node != NULL; node = node->next) {
-            int destination = node->data.destination;
-            int newDistance = distances[selectedVertex] + node->data.weight;
+            int destination = node->destination;
+            int newDistance = distances[selectedVertex] + node->weight;
             if (newDistance < distances[destination]) {
                 distances[destination] = newDistance;
                 predecessors[destination] = selectedVertex;
@@ -76,9 +70,10 @@ void dijkstra(
     free(hasSelected);
 }
 
-const ListNode *ll_insertHead(const ListNode *head, Data data) {
+const ListNode *ll_insertHead(const ListNode *head, int destination, int weight) {
     ListNode *newNode = (ListNode *) malloc(sizeof(ListNode));
-    newNode->data = data;
+    newNode->destination = destination;
+    newNode->weight = weight;
     newNode->next = head;
 
     return newNode;
@@ -94,7 +89,7 @@ void ll_releaseMemory(const ListNode *head) {
     }
 }
 
-void runDijkstra() {
+void runShortestPathAlgo(void) {
     int source = 0;
     int numVertices, numEdges;
     scanf("%d%d", &numVertices, &numEdges);
@@ -112,11 +107,10 @@ void runDijkstra() {
         scanf("%d%d%d", &source, &destination, &weight);
         source--;
         destination--;
-        Data data = { .destination = destination, .weight = weight };
-        heads[source] = ll_insertHead(heads[source], data);
+        heads[source] = ll_insertHead(heads[source], destination, weight);
     }
 
-    dijkstra(numVertices, heads, source, distances, predecessors);
+    findShortestPath(numVertices, heads, source, distances, predecessors);
     int *path = (int *) malloc(numVertices * sizeof(int));
     for (int i = 0; i < numVertices; i++) {
         printf("[%d]\n", i + 1);
@@ -152,6 +146,6 @@ void runDijkstra() {
 }
 
 int main(void) {
-    runDijkstra();
+    runShortestPathAlgo();
     return 0;
 }
