@@ -20,7 +20,7 @@ struct queue {
 int queue__constructor(Queue *queue);
 int queue__destructor(Queue *queue);
 
-int queue_empty(Queue *queue, bool *empty);
+int queue_empty(const Queue *queue, bool *empty);
 int queue_enqueue(Queue *queue, int data);
 int queue_dequeue(Queue *queue, int *data);
 

@@ -1,32 +1,13 @@
-#include <stdio.h>
+#include "shortest_path.h"
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include <limits.h>
 
-typedef struct data Data;
-
-struct data {
-    int destination;
-    int weight;
-};
-
-typedef struct listNode ListNode;
-
-struct listNode {
-    Data data;
-    const struct listNode *next;
-};
-
-void swap(int *a, int *b) {
+static void swap(int *a, int *b) {
     int tmp = *a;
     *a = *b;
     *b = tmp;
-}
-
-void reverse(int *a, int n) {
-    for (int i = 0; i < n / 2; i++) {
-        swap(&a[i], &a[n - 1 - i]);
-    }
 }
 
 typedef struct heap Heap;
@@ -38,26 +19,26 @@ struct heap {
     int *indices;
 };
 
-void heap__constructor(Heap *heap, int numVertices, int *distances, int source) {
+void heap__constructor(Heap *heap, int numVertices, int *distances, int sourceVertex) {
     heap->size = numVertices;
     heap->vertices = (int *) malloc((numVertices + 1) * sizeof(int));
     heap->indices = (int *) malloc(numVertices * sizeof(int));
 
     int j = 2;
-    for (int i = 0; i < source; i++) {
+    for (int i = 0; i < sourceVertex; i++) {
         heap->vertices[j] = i;
         heap->indices[i] = j;
         j++;
     }
 
-    for (int i = source + 1; i < numVertices; i++) {
+    for (int i = sourceVertex + 1; i < numVertices; i++) {
         heap->vertices[j] = i;
         heap->indices[i] = j;
         j++;
     }
 
-    heap->vertices[1] = source;
-    heap->indices[source] = 1;
+    heap->vertices[1] = sourceVertex;
+    heap->indices[sourceVertex] = 1;
 
     heap->vertices[0] = -1;
 
@@ -65,7 +46,7 @@ void heap__constructor(Heap *heap, int numVertices, int *distances, int source) 
         distances[i] = INT_MAX;
     }
 
-    distances[source] = 0;
+    distances[sourceVertex] = 0;
     heap->distances = distances;
 }
 
@@ -134,19 +115,25 @@ bool heap_isEmpty(const Heap *heap) {
     return heap->size == 0;
 }
 
-void dijkstra(
-    int numVertices,
-    const ListNode **heads,
-    int source,
+int findShortestPathWeightedGraph(
+    const WeightedGraph *graph,
+    int sourceVertex,
     int *distances,
     int *predecessors
 ) {
+    int numVertices = graph->numVertices;
+    const WeightedGraphListNode **listHeads = graph->listHeads;
+
+    if (sourceVertex < 0 || sourceVertex >= numVertices) {
+        return 1;
+    }
+
     for (int i = 0; i < numVertices; i++) {
         predecessors[i] = -1;
     }
 
     Heap heap;
-    heap__constructor(&heap, numVertices, distances, source);
+    heap__constructor(&heap, numVertices, distances, sourceVertex);
     while (!heap_isEmpty(&heap)) {
         int selectedVertex = heap_selectVertex(&heap);
         int currDist = distances[selectedVertex];
@@ -154,9 +141,9 @@ void dijkstra(
             break;
         }
 
-        for (const ListNode *node = heads[selectedVertex]; node != NULL; node = node->next) {
-            int destination = node->data.destination;
-            int weight = node->data.weight;
+        for (const WeightedGraphListNode *node = listHeads[selectedVertex]; node != NULL; node = node->next) {
+            int destination = node->destination;
+            int weight = node->weight;
 
             int newDist = currDist + weight;
             if (newDist < distances[destination]) {
@@ -167,84 +154,5 @@ void dijkstra(
     }
 
     heap__destructor(&heap);
-}
-
-const ListNode *ll_insertHead(const ListNode *head, Data data) {
-    ListNode *newNode = (ListNode *) malloc(sizeof(ListNode));
-    newNode->data = data;
-    newNode->next = head;
-
-    return newNode;
-}
-
-void ll_releaseMemory(const ListNode *head) {
-    const ListNode *curr = head;
-    const ListNode *next;
-    while (curr != NULL) {
-        next = curr->next;
-        free((void *) curr);
-        curr = next;
-    }
-}
-
-void runDijkstra() {
-    int source = 0;
-    int numVertices, numEdges;
-    scanf("%d%d", &numVertices, &numEdges);
-
-    int *distances = (int *) malloc(numVertices * sizeof(int));
-    int *predecessors = (int *) malloc(numVertices * sizeof(int));
-
-    const ListNode **heads = (const ListNode **) malloc(numVertices * sizeof(ListNode *));
-    for (int i = 0; i < numVertices; i++) {
-        heads[i] = NULL;
-    }
-
-    for (int j = 0; j < numEdges; j++) {
-        int source, destination, weight;
-        scanf("%d%d%d", &source, &destination, &weight);
-        source--;
-        destination--;
-        Data data = { .destination = destination, .weight = weight };
-        heads[source] = ll_insertHead(heads[source], data);
-    }
-
-    dijkstra(numVertices, heads, source, distances, predecessors);
-    int *path = (int *) malloc(numVertices * sizeof(int));
-    for (int i = 0; i < numVertices; i++) {
-        printf("[%d]\n", i + 1);
-        if (distances[i] == INT_MAX) {
-            printf("vertex is unreachable\n");
-        } else {
-            printf("distance: %d\n", distances[i]);
-            printf("path: ");
-
-            int pathLength = 0;
-            for (int v = i; v >= 0; v = predecessors[v]) {
-                path[pathLength] = v;
-                pathLength++;
-            }
-
-            reverse(path, pathLength);
-            for (int j = 0; j < pathLength; j++) {
-                printf("%d%c", path[j] + 1, j == pathLength - 1 ? '\n' : ' ');
-            }
-        }
-    }
-
-    free(path);
-
-    free(distances);
-    free(predecessors);
-
-    for (int i = 0; i < numVertices; i++) {
-        ll_releaseMemory(heads[i]);
-    }
-
-    free(heads);
-}
-
-int main(void) {
-    runDijkstra();
     return 0;
 }
