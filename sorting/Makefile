@@ -1,6 +1,6 @@
 .PHONY: clean
 
-all: bubble_sort_test selection_sort_test insertion_sort_test
+all: bubble_sort_test selection_sort_test insertion_sort_test merge_sort_test
 
 bubble_sort_test: sorting_test.o bubble_sort.o
 	gcc -o bubble_sort_test sorting_test.o bubble_sort.o
@@ -10,6 +10,9 @@ selection_sort_test: sorting_test.o selection_sort.o
 
 insertion_sort_test: sorting_test.o insertion_sort.o
 	gcc -o insertion_sort_test sorting_test.o insertion_sort.o
+
+merge_sort_test: sorting_test.o merge_sort.o
+	gcc -o merge_sort_test sorting_test.o merge_sort.o
 
 sorting_test.o: sorting_test.c
 	gcc -c sorting_test.c
@@ -23,5 +26,8 @@ selection_sort.o: selection_sort.c
 insertion_sort.o: insertion_sort.c
 	gcc -c insertion_sort.c
 
+merge_sort.o: merge_sort.c
+	gcc -c merge_sort.c
+
 clean:
-	rm *.o bubble_sort_test selection_sort_test insertion_sort_test
+	rm *.o bubble_sort_test selection_sort_test insertion_sort_test merge_sort_test
