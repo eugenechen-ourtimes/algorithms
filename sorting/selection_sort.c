@@ -10,13 +10,13 @@ static void swap(int *a, int *b) {
 
 void sort(int *a, int n) {
     for (int i = 0; i < n - 1; i++) {
-        int minIndex = i;
+        int selectedIndex = i;
         for (int j = i + 1; j < n; j++) {
-            if (a[j] < a[minIndex]) {
-                minIndex = j;
+            if (a[j] < a[selectedIndex]) {
+                selectedIndex = j;
             }
         }
 
-        swap(&a[i], &a[minIndex]);
+        swap(&a[i], &a[selectedIndex]);
     }
 }
