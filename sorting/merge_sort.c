@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-void merge(int *a, int p, int q, int r, int *b_l, int *b_r) {
+static void merge(int *a, int p, int q, int r, int *b_l, int *b_r) {
     int n_l = q - p + 1;
     int n_r = r - q;
     int i, j, k;
@@ -43,7 +43,7 @@ void merge(int *a, int p, int q, int r, int *b_l, int *b_r) {
     }
 }
 
-void mergeSort(int *a, int p, int r, int *b_l, int *b_r) {
+static void mergeSort(int *a, int p, int r, int *b_l, int *b_r) {
     if (p >= r) {
         return;
     }

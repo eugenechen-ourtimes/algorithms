@@ -1,7 +1,5 @@
 #include "sorting.h"
 
-#include <stdbool.h>
-
 static void swap(int *a, int *b) {
     int tmp = *a;
     *a = *b;
