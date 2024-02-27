@@ -16,8 +16,9 @@ static int partition(int *a, int low, int high) {
         }
     }
 
-    swap(&a[i + 1], &a[high]);
-    return i + 1;
+    i++;
+    swap(&a[i], &a[high]);
+    return i;
 }
 
 static void quickSort(int *a, int low, int high) {
